@@ -9,19 +9,27 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const contractAddress = '0xa8dC92bEeF9E5D20B21A5CC01bf8b6a5E0a51888';
 
 let provider;
-let signer;
 let erc20;
 let noProviderAbort = true;
+
+window.ethereum.on('accountsChanged', (_chainId) => window.location.reload());
+window.ethereum.on('disconnect', (_chainId) => window.location.reload());
 
 // Ensures metamask or similar installed
 if (typeof window.ethereum !== 'undefined' || (typeof window.web3 !== 'undefined')) {
 	try {
 		// Ethers.js set up, gets data from MetaMask and blockchain
-		window.ethereum.enable().then(
-			provider = new ethers.providers.Web3Provider(window.ethereum)
-		);
-		signer = provider.getSigner();
-		erc20 = new ethers.Contract(contractAddress, PreciousChickenToken.abi, signer);
+		//window.ethereum.enable().then(
+		//	provider = new ethers.providers.Web3Provider(window.ethereum)
+		//);
+		//signer = provider.getSigner();
+		//erc20 = new ethers.Contract(contractAddress, PreciousChickenToken.abi, signer);
+		//provider = new ethers.providers.Web3Provider(window.ethereum);
+		//if(provider){
+		//	setSigner(provider.getSigner());
+		//		erc20 = new ethers.Contract(contractAddress, PreciousChickenToken.abi, signer);
+		//}
+				
 		noProviderAbort = false;
 	} catch (e) {
 		noProviderAbort = true;
@@ -29,6 +37,7 @@ if (typeof window.ethereum !== 'undefined' || (typeof window.web3 !== 'undefined
 }
 
 function App() {
+	const [signer, setSigner] = useState(null);
 	const [walAddress, setWalAddress] = useState('0x00');
 	const [pctBal, setPctBal] = useState(0);
 	const [ethBal, setEthBal] = useState(0);
@@ -49,6 +58,24 @@ function App() {
 				<p><a href="https://metamask.io">Metamask</a> or equivalent required to access this page.</p>
 			</div>
 		);
+	}
+
+	try {
+		// Ethers.js set up, gets data from MetaMask and blockchain
+		//window.ethereum.enable().then(
+		//	provider = new ethers.providers.Web3Provider(window.ethereum)
+		//);
+		//signer = provider.getSigner();
+		//erc20 = new ethers.Contract(contractAddress, PreciousChickenToken.abi, signer);
+		provider = new ethers.providers.Web3Provider(window.ethereum);
+		if (provider && !signer){
+			setSigner(provider.getSigner());
+			erc20 = new ethers.Contract(contractAddress, PreciousChickenToken.abi, signer);
+		}
+				
+		//noProviderAbort = false;
+	} catch (e) {
+		console.log('something fucked up happened');
 	}
 
 	// Notification to user that transaction sent to blockchain
@@ -75,29 +102,31 @@ function App() {
 		);
 	};
 
-	// Sets current balance of PCT for user
-	signer.getAddress().then(response => {
-		setWalAddress(response);
-		return erc20.balanceOf(response);
-	}).then(balance => {
-		setPctBal(balance.toString())
-	});
+	if (signer) {	
+		// Sets current balance of PCT for user
+		signer.getAddress().then(response => {
+			setWalAddress(response);
+			return erc20.balanceOf(response);
+		}).then(balance => {
+			setPctBal(balance.toString())
+		});
 
-	// Sets current balance of Eth for user
-	signer.getAddress().then(response => {
-		return provider.getBalance(response);
-	}).then(balance => {
-		let formattedBalance = ethers.utils.formatUnits(balance, 18);
-		setEthBal(formattedBalance.toString())
-	});
+		// Sets current balance of Eth for user
+		signer.getAddress().then(response => {
+			return provider.getBalance(response);
+		}).then(balance => {
+			let formattedBalance = ethers.utils.formatUnits(balance, 18);
+			setEthBal(formattedBalance.toString())
+		});
 
-	// Sets symbol of ERC20 token (i.e. PCT)
-	async function getSymbol() {
-		let symbol = await erc20.symbol();
-		return symbol;
+		// Sets symbol of ERC20 token (i.e. PCT)
+		//async function getSymbol() {
+		//	let symbol = await erc20.symbol();
+		//	return symbol;
+		//}
+		//let symbol = getSymbol();
+		//symbol.then(x => setCoinSymbol(x.toString()));
 	}
-	let symbol = getSymbol();
-	symbol.then(x => setCoinSymbol(x.toString()));
 
 	// Interacts with smart contract to buy PCT
 	async function buyPCT() {
@@ -161,15 +190,48 @@ function App() {
 		sellPCT();
 	};
 
+	// Handles user sell form submit
+	const handleConnectSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		try {
+			// Ethers.js set up, gets data from MetaMask and blockchain
+			window.ethereum.enable().then(()=>{
+				provider = new ethers.providers.Web3Provider(window.ethereum);
+				setSigner(provider.getSigner());
+				erc20 = new ethers.Contract(contractAddress, PreciousChickenToken.abi, signer);
+			}
+			);
+			
+			//noProviderAbort = false;
+		} catch (e) {
+			console.log(e);
+			//noProviderAbort = true;
+		}
+	};
+
 	return (
 		<div className="App">
 			<header className="App-header">
-
+			<div className="ant-page-header-heading-title">
+					GLD3
+				</div>
+				<form onSubmit={handleConnectSubmit}>
+					<span className="connect-button-holder">
+						<Button type="submit" className="connect-button">Connect MetaMask</Button>
+					</span>
+					
+				</form>
 				<ErrorAlert />
 				<PendingAlert />
-
-				<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Ethereum-icon-purple.svg/512px-Ethereum-icon-purple.svg.png" className="App-logo" alt="Ethereum logo" />
-
+				<div className="picture-text">
+				<img src="goldsaved.png" className="gold-image"/>
+				<div className="gold-text-right"> 
+				<div className="gold-text-right-title">
+				Immutable Gold that you can collateralize. 
+				</div>
+				<br/>
+				Tokenized at Market Price. Embeded in the blockchain. Web3 ready. </div>
+				</div>
 				<h2>{coinSymbol}</h2>
 
 				<p>
