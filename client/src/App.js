@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { ethers } from "ethers";
 import PreciousChickenToken from "./contracts/PreciousChickenToken.json";
 import { Button, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Home from './Home';
+import Cards from './Cards';
+//import Mint from './Mint';
+
+const OWNER_ADDRESS = "0x46C52823C6cfE568b99824ae1d3201c4E6c581fC";
+
 
 // Needs to change to reflect current PreciousChickenToken address
 const contractAddress = '0xa8dC92bEeF9E5D20B21A5CC01bf8b6a5E0a51888';
@@ -29,16 +35,22 @@ if (typeof window.ethereum !== 'undefined' || (typeof window.web3 !== 'undefined
 		//	setSigner(provider.getSigner());
 		//		erc20 = new ethers.Contract(contractAddress, PreciousChickenToken.abi, signer);
 		//}
-				
+
 		noProviderAbort = false;
 	} catch (e) {
 		noProviderAbort = true;
 	}
 }
 
+function abbrevWalAdress(sha) {
+	return '0x' + sha.slice(-3) + '...' + sha.slice(-3);
+}
+
 function App() {
+	const baseSha = "0x00..";
+
 	const [signer, setSigner] = useState(null);
-	const [walAddress, setWalAddress] = useState('0x00');
+	const [walAddress, setWalAddress] = useState(baseSha);
 	const [pctBal, setPctBal] = useState(0);
 	const [ethBal, setEthBal] = useState(0);
 	const [coinSymbol, setCoinSymbol] = useState("Nil");
@@ -49,7 +61,34 @@ function App() {
 	const [isPending, setIsPending] = useState(false);
 	const [errMsg, setErrMsg] = useState("Transaction failed!");
 	const [isError, setIsError] = useState(false);
+	
+	const [feedXAU, setFeedXAU] = useState(null);
+	const [currentXAU, setCurrentXAU] = useState(0.00);
 
+	// initialize methods here	
+	const updatePriceFeeds = (id, setFeed, setCurrent) => {
+		fetch('/coins/' + id + '/market_chart?vs_currency=usd&days=1080&interval=monthly')
+		.then(response => response.json())
+		.then(data => {
+			setCurrent(data.prices[data.prices.length - 1][1]);
+			setFeed(data);
+			console.log(data.prices[data.prices.length - 1][1]);
+			console.log(data) // Prints result from `response.json()`
+		})
+		.catch(error => console.error(error))
+	}
+
+	// hooks here
+	useEffect(() => {
+		//to do throttle this request by hour
+
+		!feedXAU && updatePriceFeeds('tether-gold', setFeedXAU, setCurrentXAU);
+		//updatePriceFeeds('bitcoin');
+		//updatePriceFeeds('ethereum', setCurrentXAU);
+	});
+
+
+	
 	// Aborts app if metamask etc not present
 	if (noProviderAbort) {
 		return (
@@ -68,11 +107,11 @@ function App() {
 		//signer = provider.getSigner();
 		//erc20 = new ethers.Contract(contractAddress, PreciousChickenToken.abi, signer);
 		provider = new ethers.providers.Web3Provider(window.ethereum);
-		if (provider && !signer){
+		if (provider && !signer) {
 			setSigner(provider.getSigner());
 			erc20 = new ethers.Contract(contractAddress, PreciousChickenToken.abi, signer);
 		}
-				
+
 		//noProviderAbort = false;
 	} catch (e) {
 		console.log('something fucked up happened');
@@ -102,7 +141,7 @@ function App() {
 		);
 	};
 
-	if (signer) {	
+	if (signer) {
 		// Sets current balance of PCT for user
 		signer.getAddress().then(response => {
 			setWalAddress(response);
@@ -195,13 +234,13 @@ function App() {
 		e.preventDefault();
 		try {
 			// Ethers.js set up, gets data from MetaMask and blockchain
-			window.ethereum.enable().then(()=>{
+			window.ethereum.enable().then(() => {
 				provider = new ethers.providers.Web3Provider(window.ethereum);
 				setSigner(provider.getSigner());
 				erc20 = new ethers.Contract(contractAddress, PreciousChickenToken.abi, signer);
 			}
 			);
-			
+
 			//noProviderAbort = false;
 		} catch (e) {
 			console.log(e);
@@ -209,29 +248,36 @@ function App() {
 		}
 	};
 
+	let appSize = "";
+	if (walAddress !== baseSha) {
+		appSize = " big-app";
+	}
+	const isOwner = (OWNER_ADDRESS === walAddress);
+
 	return (
-		<div className="App">
+		<div className={"App" + appSize}>
 			<header className="App-header">
-			<div className="ant-page-header-heading-title">
+				<div className="ant-page-header-heading-title">
 					GLD3
 				</div>
 				<form onSubmit={handleConnectSubmit}>
 					<span className="connect-button-holder">
-						<Button type="submit" className="connect-button">Connect MetaMask</Button>
+						{appSize && abbrevWalAdress(walAddress)}
+						{!appSize && <Button type="submit" className="connect-button">Connect MetaMask</Button>}
 					</span>
-					
 				</form>
+				{appSize && <Cards />}
+				{!appSize && <Home currentXAU={currentXAU} feedXAU={feedXAU}/>}
 				<ErrorAlert />
 				<PendingAlert />
-				<div className="picture-text">
-				<img src="goldsaved.png" className="gold-image"/>
-				<div className="gold-text-right"> 
-				<div className="gold-text-right-title">
-				Immutable Gold that you can collateralize. 
-				</div>
+				
+				
+				
+				
+				
+				<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 				<br/>
-				Tokenized at Market Price. Embeded in the blockchain. Web3 ready. </div>
-				</div>
+
 				<h2>{coinSymbol}</h2>
 
 				<p>
@@ -265,6 +311,11 @@ function App() {
 						Ethereum logo by GitRon1n
 		</span></a>
 			</header>
+			<div class="admin-label">
+				<div class="admin-label-sub">
+					{isOwner && "God of the Chain"}
+				</div>
+			</div>
 		</div>
 	);
 }
