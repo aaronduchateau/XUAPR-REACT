@@ -10,7 +10,7 @@ const COLORS = ['#56e2f6', '#00a0d0', '#FFBB28', '#FF8042'];
 
 const CardFixed = (props) => {
     const [photoView, setPhotoView] = useState(false);
-      const { handleFlip } = props;
+      const { handleFlip, card } = props;
       console.log('wat');
       console.log(handleFlip);
       const imgClick = (e)=> {
@@ -31,7 +31,7 @@ const CardFixed = (props) => {
         <div className="sc-fWPcDo cgpajZ_2 card-template-main" onClick={onFlip}>
         <h3 className="sc-cbDGPM eTEuVf">#E56778</h3>
         <div className="mint-cardGroup">
-            <img src="https://photos.zillowstatic.com/fp/9333359fae71c6c3e7ea655f6a990f3f-cc_ft_1536.jpg" style={{ paddingBottom: '10px' }} class={"zoom " + zoomedIn}/>
+            <img src={card.img} style={{ paddingBottom: '10px' }} class={"zoom " + zoomedIn}/>
             <div className="pie-holder" onClick={imgClick} >
                 {!photoView && <PieChart width={320} height={320} >
                     <Pie

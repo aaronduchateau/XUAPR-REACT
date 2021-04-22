@@ -14,6 +14,11 @@ body {
   width: calc(100% - 275px);
 }
 
+.back-o-card-buts {
+  min-width: 220px !important;
+  margin-top: 30px !important;
+}
+
 .big-app {
   max-width: calc(100% - 40px);
   width: calc(100% - 40px);

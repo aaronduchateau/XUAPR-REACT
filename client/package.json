@@ -13,6 +13,7 @@
     "react-card-flip": "^1.1.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
+    "react-slider": "^1.1.4",
     "recharts": "^2.0.9"
   },
   "scripts": {

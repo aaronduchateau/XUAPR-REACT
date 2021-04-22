@@ -6,7 +6,47 @@ import { Button, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './Home';
 import Cards from './Cards';
-//import Mint from './Mint';
+
+const NFTData = [
+	{
+		1: {id: 1, parentId: null, topLevelId: 1, title: "House of the Hill", tagNum: "#E56778", segments: [20,30,10,40], img: 'https://photos.zillowstatic.com/fp/9333359fae71c6c3e7ea655f6a990f3f-cc_ft_1536.jpg' },
+		2: {id: 2, parentId: 1, topLevelId: 1, title: "House of the Hill", tagNum: "#E56778", segments: [50,50], img: 'https://photos.zillowstatic.com/fp/9333359fae71c6c3e7ea655f6a990f3f-cc_ft_1536.jpg'},
+		3: {id: 3, parentId: 1, topLevelId: 1, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/9333359fae71c6c3e7ea655f6a990f3f-cc_ft_1536.jpg' },
+		4: {id: 4, parentId: 1, topLevelId: 1, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/9333359fae71c6c3e7ea655f6a990f3f-cc_ft_1536.jpg' },
+		5: {id: 5, parentId: 1, topLevelId: 1, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/9333359fae71c6c3e7ea655f6a990f3f-cc_ft_1536.jpg' },
+		6: {id: 6, parentId: 2, topLevelId: 1, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/9333359fae71c6c3e7ea655f6a990f3f-cc_ft_1536.jpg' },
+		7: {id: 7, parentId: 2, topLevelId: 1, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/9333359fae71c6c3e7ea655f6a990f3f-cc_ft_1536.jpg' },
+	},
+	{
+		1: {id: 1, parentId: null, topLevelId: 2, title: "House of the Hill", tagNum: "#E56778", segments: [20,30,10,40], img: 'https://photos.zillowstatic.com/fp/f0dc4ad65b303f1f77aa5067a44f5733-cc_ft_1536.jpg' },
+		2: {id: 2, parentId: 1, topLevelId: 2, title: "House of the Hill", tagNum: "#E56778", segments: [50,50], img: 'https://photos.zillowstatic.com/fp/f0dc4ad65b303f1f77aa5067a44f5733-cc_ft_1536.jpg'},
+		3: {id: 3, parentId: 1, topLevelId: 2, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/f0dc4ad65b303f1f77aa5067a44f5733-cc_ft_1536.jpg' },
+		4: {id: 4, parentId: 1, topLevelId: 2, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/f0dc4ad65b303f1f77aa5067a44f5733-cc_ft_1536.jpg' },
+		5: {id: 5, parentId: 1, topLevelId: 2, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/f0dc4ad65b303f1f77aa5067a44f5733-cc_ft_1536.jpg' },
+	}, 
+	{
+		1: {id: 1, parentId: null, topLevelId: 3, title: "House of the Hill", tagNum: "#E56778", segments: [20,30,10,40], img: 'https://photos.zillowstatic.com/fp/6180c23d544b6b579d267a99e7457131-cc_ft_1536.jpg' },
+		2: {id: 2, parentId: 1, topLevelId: 3, title: "House of the Hill", tagNum: "#E56778", segments: [50,50], img: 'https://photos.zillowstatic.com/fp/6180c23d544b6b579d267a99e7457131-cc_ft_1536.jpg'},
+		3: {id: 3, parentId: 1, topLevelId: 3, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/6180c23d544b6b579d267a99e7457131-cc_ft_1536.jpg' },
+		4: {id: 4, parentId: 1, topLevelId: 3, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/6180c23d544b6b579d267a99e7457131-cc_ft_1536.jpg' },
+		5: {id: 5, parentId: 1, topLevelId: 3, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/6180c23d544b6b579d267a99e7457131-cc_ft_1536.jpg' },
+	},
+	{
+		1: {id: 1, parentId: null, topLevelId: 4, title: "House of the Hill", tagNum: "#E56778", segments: [20,30,10,40], img: 'https://photos.zillowstatic.com/fp/760fc6ae87a8c55a99d22608d6b51ef7-cc_ft_1536.jpg' },
+		2: {id: 2, parentId: 1, topLevelId: 4, title: "House of the Hill", tagNum: "#E56778", segments: [50,50], img: 'https://photos.zillowstatic.com/fp/760fc6ae87a8c55a99d22608d6b51ef7-cc_ft_1536.jpg'  },
+		3: {id: 3, parentId: 1, topLevelId: 4, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/760fc6ae87a8c55a99d22608d6b51ef7-cc_ft_1536.jpg'  },
+		4: {id: 4, parentId: 1, topLevelId: 4, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/760fc6ae87a8c55a99d22608d6b51ef7-cc_ft_1536.jpg'  },
+		5: {id: 5, parentId: 1, topLevelId: 4, title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/760fc6ae87a8c55a99d22608d6b51ef7-cc_ft_1536.jpg'  },
+	},
+	{
+		1: {id: 1, parentId: null, topLevelId: 5, title: "House of the Hill", tagNum: "#E56778", segments: [20,30,10,40], img: 'https://photos.zillowstatic.com/fp/f44d2a3601efc4ab0d706e6ad8f800d0-cc_ft_1536.jpg' },
+		2: {id: 2, parentId: 1, topLevelId: 5,  title: "House of the Hill", tagNum: "#E56778", segments: [50,50], img: 'https://photos.zillowstatic.com/fp/f44d2a3601efc4ab0d706e6ad8f800d0-cc_ft_1536.jpg' },
+		3: {id: 3, parentId: 1, topLevelId: 5,  title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/f44d2a3601efc4ab0d706e6ad8f800d0-cc_ft_1536.jpg' },
+		4: {id: 4, parentId: 1, topLevelId: 5,  title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/f44d2a3601efc4ab0d706e6ad8f800d0-cc_ft_1536.jpg' },
+		5: {id: 5, parentId: 1, topLevelId: 5,  title: "House of the Hill", tagNum: "#E56778", segments: [100], img: 'https://photos.zillowstatic.com/fp/f44d2a3601efc4ab0d706e6ad8f800d0-cc_ft_1536.jpg' },
+	},
+];
+
 
 const OWNER_ADDRESS = "0x46C52823C6cfE568b99824ae1d3201c4E6c581fC";
 
@@ -266,7 +306,7 @@ function App() {
 						{!appSize && <Button type="submit" className="connect-button">Connect MetaMask</Button>}
 					</span>
 				</form>
-				{appSize && <Cards />}
+				{appSize && <Cards NFTData={NFTData}/>}
 				{!appSize && <Home currentXAU={currentXAU} feedXAU={feedXAU}/>}
 				<ErrorAlert />
 				<PendingAlert />
